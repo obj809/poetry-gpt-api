@@ -1,10 +1,6 @@
-# .dockerignore
-
 node_modules
 dist
 .git
 .env
 npm-debug.log
-Dockerfile
-docker-compose.yml
-README.md
+.DS_Store

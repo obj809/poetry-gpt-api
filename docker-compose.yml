@@ -2,6 +2,7 @@
 
 services:
   api:
+    platform: linux/amd64
     build: .
     container_name: openai-api
     ports:

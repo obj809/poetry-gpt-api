@@ -10,8 +10,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3001;
-app.use((0, cors_1.default)());
+const PORT = 3001;
+app.use((0, cors_1.default)({
+    origin: process.env.CORS_ORIGIN?.split(",") ?? [],
+}));
 app.use(express_1.default.json());
 app.post("/generate", async (req, res) => {
     try {
@@ -41,6 +43,6 @@ app.post("/generate", async (req, res) => {
         res.status(500).json({ error: "OpenAI request failed" });
     }
 });
-app.listen(PORT, () => {
-    console.log(`API running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`API running on http://0.0.0.0:${PORT}`);
 });

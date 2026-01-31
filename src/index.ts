@@ -8,9 +8,11 @@ import axios from "axios";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN?.split(",") ?? [],
+}));
 app.use(express.json());
 
 app.post("/generate", async (req, res) => {
@@ -51,6 +53,6 @@ app.post("/generate", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`API running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`API running on http://0.0.0.0:${PORT}`);
 });
