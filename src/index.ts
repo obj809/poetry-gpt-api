@@ -10,7 +10,6 @@ dotenv.config();
 const app = express();
 const PORT = 3001;
 
-// Build a clean allowlist (trim whitespace!)
 const allowedOrigins = (process.env.CORS_ORIGIN || "")
   .split(",")
   .map((s) => s.trim())
@@ -18,11 +17,8 @@ const allowedOrigins = (process.env.CORS_ORIGIN || "")
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, cb) => {
-    // allow requests without Origin (curl, server-to-server)
     if (!origin) return cb(null, true);
-
     if (allowedOrigins.includes(origin)) return cb(null, true);
-
     return cb(null, false);
   },
   methods: ["GET", "POST", "OPTIONS"],
@@ -30,8 +26,7 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Important: answer preflight requests for all routes
-app.options("*", cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json());
 
