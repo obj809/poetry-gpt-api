@@ -2,11 +2,14 @@
 
 services:
   api:
-    platform: linux/amd64
     build: .
-    container_name: openai-api
-    ports:
-      - "3001:3001"
+    container_name: poetry-gpt-api
+    restart: unless-stopped
     env_file:
       - .env
-    restart: unless-stopped
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    external: true
