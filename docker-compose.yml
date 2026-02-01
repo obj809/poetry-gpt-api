@@ -8,8 +8,8 @@ services:
     env_file:
       - .env
     networks:
-      - webnet
+      - npm_default
 
 networks:
-  webnet:
+  npm_default:
     external: true
