@@ -10,9 +10,29 @@ dotenv.config();
 const app = express();
 const PORT = 3001;
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(",") ?? [],
-}));
+// Build a clean allowlist (trim whitespace!)
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, cb) => {
+    // allow requests without Origin (curl, server-to-server)
+    if (!origin) return cb(null, true);
+
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+
+    return cb(null, false);
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+// Important: answer preflight requests for all routes
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
 
 app.post("/generate", async (req, res) => {
@@ -45,7 +65,6 @@ app.post("/generate", async (req, res) => {
     );
 
     const text = openaiRes.data.choices?.[0]?.message?.content ?? "";
-
     res.json({ text });
   } catch (error: any) {
     console.error(error?.response?.data || error.message);
@@ -55,4 +74,5 @@ app.post("/generate", async (req, res) => {
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`API running on http://0.0.0.0:${PORT}`);
+  console.log("CORS allowlist:", allowedOrigins);
 });
