@@ -12,6 +12,15 @@ docker compose up -d --force-recreate # recreate to pick up .env changes
 docker compose logs -f                # follow logs
 docker compose down                   # stop and remove
 
+## Production deploy (VPS, via docker-compose.prod.yml)
+git clone git@github.com:obj809/poetry-gpt-api.git ~/poetry-gpt-api   # or HTTPS if no SSH key on the box
+cd ~/poetry-gpt-api
+cp .env.example .env                  # then edit: LiteLLM virtual key + CORS origins
+docker network create webnet          # idempotent; usually already exists
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml down
+
 ## Networks (external, must exist before `up`)
 docker network create webnet          # create if missing
 docker inspect poetry-gpt-api \

@@ -17,7 +17,11 @@ The server keeps your `OPENAI_API_KEY` on the backend instead of shipping it to 
 npm install
 ```
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (copy the template and fill in values):
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 OPENAI_API_KEY=sk-...                       # required (OpenAI key, or a LiteLLM virtual key)
