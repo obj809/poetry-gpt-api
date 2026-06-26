@@ -30,6 +30,10 @@ app.options(/.*/, cors(corsOptions));
 
 app.use(express.json());
 
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.post("/generate", async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -39,7 +43,7 @@ app.post("/generate", async (req, res) => {
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const model = process.env.OPENAI_MODEL || "gpt-5.4-nano";
 
     if (!apiKey) {
       return res.status(500).json({ error: "Server misconfigured" });

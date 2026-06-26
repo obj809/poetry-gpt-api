@@ -11,10 +11,27 @@ const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = 3001;
-app.use((0, cors_1.default)({
-    origin: process.env.CORS_ORIGIN?.split(",") ?? [],
-}));
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+const corsOptions = {
+    origin: (origin, cb) => {
+        if (!origin)
+            return cb(null, true);
+        if (allowedOrigins.includes(origin))
+            return cb(null, true);
+        return cb(null, false);
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use((0, cors_1.default)(corsOptions));
+app.options(/.*/, (0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
+app.get("/health", (_req, res) => {
+    res.json({ status: "ok" });
+});
 app.post("/generate", async (req, res) => {
     try {
         const { prompt } = req.body;
@@ -22,7 +39,7 @@ app.post("/generate", async (req, res) => {
             return res.status(400).json({ error: "Invalid prompt" });
         }
         const apiKey = process.env.OPENAI_API_KEY;
-        const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+        const model = process.env.OPENAI_MODEL || "gpt-5.4-nano";
         if (!apiKey) {
             return res.status(500).json({ error: "Server misconfigured" });
         }
@@ -45,4 +62,5 @@ app.post("/generate", async (req, res) => {
 });
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`API running on http://0.0.0.0:${PORT}`);
+    console.log("CORS allowlist:", allowedOrigins);
 });

@@ -1,13 +1,15 @@
 # commands.md
 
+## Local dev
 npx ts-node-dev src/index.ts
 
-docker build -t openai-api .
-docker run --rm -p 3001:3001 \
-  -e PORT=3001 \
-  -e OPENAI_API_KEY="your_key" \
-  -e OPENAI_MODEL="gpt-4o-mini" \
-  openai-api
+## Docker (via docker-compose)
+docker compose up -d --build      # build and start in the background
+docker compose logs -f            # follow logs
+docker compose down               # stop and remove
+
+## Smoke test
+curl -s http://localhost:3001/health
 
 curl -s http://localhost:3001/generate \
   -H "Content-Type: application/json" \
