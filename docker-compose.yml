@@ -12,6 +12,7 @@ services:
     networks:
       - default
       - litellm
+      - webnet
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
       interval: 30s
@@ -22,4 +23,7 @@ services:
 networks:
   litellm:
     name: litellm-docker-container_default
+    external: true
+  webnet:
+    name: webnet
     external: true
