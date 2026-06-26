@@ -20,12 +20,35 @@ npm install
 Create a `.env` file in the project root:
 
 ```bash
-OPENAI_API_KEY=sk-...                       # required
+OPENAI_API_KEY=sk-...                       # required (OpenAI key, or a LiteLLM virtual key)
 OPENAI_MODEL=gpt-5.4-nano                    # optional, defaults to gpt-5.4-nano
+OPENAI_BASE_URL=https://api.openai.com/v1    # optional, defaults to OpenAI; see "Routing through LiteLLM"
 CORS_ORIGIN=http://localhost:5173,http://localhost:3000  # comma-separated allowlist
 ```
 
 `.env` is gitignored and should never be committed.
+
+### Routing through LiteLLM
+
+The service talks to any OpenAI-compatible endpoint via `OPENAI_BASE_URL`. To send
+requests through a local [LiteLLM](https://github.com/obj809/litellm-docker-container)
+proxy instead of OpenAI directly, set the base URL to the proxy and use a LiteLLM
+virtual key as `OPENAI_API_KEY`:
+
+```bash
+OPENAI_API_KEY=sk-<litellm-virtual-key>
+OPENAI_BASE_URL=http://litellm:4000/v1      # docker service name on the shared network
+```
+
+When running on the host with `npm run dev` (not inside Docker), the `litellm`
+hostname won't resolve — use the published port instead:
+
+```bash
+OPENAI_BASE_URL=http://localhost:4000/v1 npm run dev
+```
+
+In Docker, `docker-compose.yml` attaches this service to the external
+`litellm-docker-container_default` network so it can reach the proxy by name.
 
 ## Running
 

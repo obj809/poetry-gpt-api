@@ -40,10 +40,11 @@ app.post("/generate", async (req, res) => {
         }
         const apiKey = process.env.OPENAI_API_KEY;
         const model = process.env.OPENAI_MODEL || "gpt-5.4-nano";
+        const baseURL = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
         if (!apiKey) {
             return res.status(500).json({ error: "Server misconfigured" });
         }
-        const openaiRes = await axios_1.default.post("https://api.openai.com/v1/chat/completions", {
+        const openaiRes = await axios_1.default.post(`${baseURL}/chat/completions`, {
             model,
             messages: [
                 {
