@@ -1,0 +1,28 @@
+# docker-compose.prod.yml — VPS deployment. Requires external `webnet` (docker network create webnet).
+# Deploy: docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  api:
+    build: .
+    container_name: poetry-gpt-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - webnet
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  webnet:
+    name: webnet
+    external: true
