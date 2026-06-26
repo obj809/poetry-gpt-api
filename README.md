@@ -1,4 +1,4 @@
-# poetry-gpt-api
+# PoetryGPT API
 
 A minimal Express + TypeScript service that proxies prompts to the OpenAI Chat Completions API. It exposes a single endpoint, `POST /generate`, that takes a text prompt and returns the model's response. The model is configured via `OPENAI_MODEL` (defaults to `gpt-5.4-nano`) — there is no prompt-shaping logic in the server itself, so it works as a generic OpenAI relay.
 
