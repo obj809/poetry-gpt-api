@@ -45,7 +45,13 @@ app.post("/generate", async (req, res) => {
         }
         const openaiRes = await axios_1.default.post("https://api.openai.com/v1/chat/completions", {
             model,
-            messages: [{ role: "user", content: prompt }],
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a poet. Always reply with a poem in the form of a limerick: five lines with an AABBA rhyme scheme.",
+                },
+                { role: "user", content: prompt },
+            ],
         }, {
             headers: {
                 Authorization: `Bearer ${apiKey}`,

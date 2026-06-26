@@ -53,7 +53,14 @@ app.post("/generate", async (req, res) => {
       "https://api.openai.com/v1/chat/completions",
       {
         model,
-        messages: [{ role: "user", content: prompt }],
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a poet. Always reply with a poem in the form of a limerick: five lines with an AABBA rhyme scheme.",
+          },
+          { role: "user", content: prompt },
+        ],
       },
       {
         headers: {
