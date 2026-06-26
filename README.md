@@ -113,10 +113,35 @@ The service is then available at `http://localhost:3001`. Make sure `.env`
 contains a valid `OPENAI_API_KEY` before starting — compose passes it into the
 container via `env_file`.
 
+### Networks
+
+`docker-compose.yml` attaches the container to two **external** Docker networks
+in addition to the project's own `default` network:
+
+| Network | Purpose |
+| ------- | ------- |
+| `litellm-docker-container_default` | Outbound — lets this service reach the LiteLLM proxy by name at `http://litellm:4000/v1` (see [Routing through LiteLLM](#routing-through-litellm)). |
+| `webnet` | Inbound — lets other containers on `webnet` reach this service by name at `http://poetry-gpt-api:3001`. |
+
+Because both are declared `external: true`, they must already exist before you run
+`docker compose up`, otherwise compose will error. They are created by their
+owning projects; to create `webnet` manually if needed:
+
+```bash
+docker network create webnet
+```
+
+Verify which networks the running container joined:
+
+```bash
+docker inspect poetry-gpt-api \
+  --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}'
+```
+
 ## Project layout
 
 ```
 src/index.ts        # the entire application
 Dockerfile          # multi-stage build (builder -> slim runtime)
-docker-compose.yml  # deployment behind a reverse proxy network
+docker-compose.yml  # build, healthcheck, and external network wiring (litellm, webnet)
 ```
