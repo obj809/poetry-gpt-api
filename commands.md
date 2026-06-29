@@ -13,10 +13,10 @@ docker compose logs -f                # follow logs
 docker compose down                   # stop and remove
 
 ## Production deploy (VPS, via docker-compose.prod.yml)
-git clone git@github.com:obj809/poetry-gpt-api.git ~/poetry-gpt-api   # or HTTPS if no SSH key on the box
+git clone git@github.com:obj809/poetry-gpt-api.git ~/poetry-gpt-api
 cd ~/poetry-gpt-api
 cp .env.example .env                  # then edit: LiteLLM virtual key + CORS origins
-docker network create webnet          # idempotent; usually already exists
+docker network create webnet
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml logs -f
 docker compose -f docker-compose.prod.yml down
@@ -28,7 +28,7 @@ docker inspect poetry-gpt-api \
 
 ## Health
 curl -s http://localhost:3001/health
-docker inspect --format '{{.State.Health.Status}}' poetry-gpt-api         # container healthcheck
+docker inspect --format '{{.State.Health.Status}}' poetry-gpt-api
 
 ## Smoke test (/generate returns a limerick)
 curl -s http://localhost:3001/generate \
