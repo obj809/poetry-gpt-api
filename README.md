@@ -2,10 +2,6 @@
 
 A minimal Express + TypeScript service that proxies prompts to the OpenAI Chat Completions API. It exposes a single endpoint, `POST /generate`, that takes a text prompt and returns the model's response. The model is configured via `OPENAI_MODEL` (defaults to `gpt-5.4-nano`) — there is no prompt-shaping logic in the server itself, so it works as a generic OpenAI relay.
 
-## Why a proxy?
-
-The server keeps your `OPENAI_API_KEY` on the backend instead of shipping it to the browser, and applies a CORS allowlist so only approved frontends can call it.
-
 ## Requirements
 
 - Node.js 20+
@@ -30,8 +26,6 @@ OPENAI_BASE_URL=https://api.openai.com/v1    # optional, defaults to OpenAI; see
 CORS_ORIGIN=http://localhost:5173,http://localhost:3000  # comma-separated allowlist
 ```
 
-`.env` is gitignored and should never be committed.
-
 ### Routing through LiteLLM
 
 The service talks to any OpenAI-compatible endpoint via `OPENAI_BASE_URL`. To send
@@ -41,7 +35,7 @@ virtual key as `OPENAI_API_KEY`:
 
 ```bash
 OPENAI_API_KEY=sk-<litellm-virtual-key>
-OPENAI_BASE_URL=http://litellm:4000/v1      # docker service name on the shared network
+OPENAI_BASE_URL=http://litellm:4000/v1
 ```
 
 When running on the host with `npm run dev` (not inside Docker), the `litellm`
@@ -140,12 +134,4 @@ Verify which networks the running container joined:
 ```bash
 docker inspect poetry-gpt-api \
   --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}'
-```
-
-## Project layout
-
-```
-src/index.ts        # the entire application
-Dockerfile          # multi-stage build (builder -> slim runtime)
-docker-compose.yml  # build, healthcheck, and external network wiring (litellm, webnet)
 ```
